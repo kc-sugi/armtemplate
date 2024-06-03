@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "[concat('uctest1', uniqueString(subscription().id))]"
+        },
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": "ws-test-001"
+        },
+        "accessConnectorName": {
+            "type": "string",
+            "defaultValue": "ac-test-001"
+        },
+        "roleNameGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('Deploy-',parameters('workspaceName'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://ssugiazcopytest.blob.core.windows.net/storage001/template_databricks.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[parameters('workspaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('Deploy-',parameters('storageAccountName'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri":"https://ssugiazcopytest.blob.core.windows.net/storage001/template_blobstorage.json",
+                    "contentVersion":"1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "name": "[concat('Deploy-',parameters('accessConnectorName'))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri":"https://ssugiazcopytest.blob.core.windows.net/storage001/template_accessconnector.json",
+                    "contentVersion":"1.0.0.0"
+                },
+                "parameters": {
+                    "connectorName": {
+                        "value": "[parameters('accessConnectorName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-10-01-preview",
+            "name": "[parameters('roleNameGuid')]",
+            "scope": "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat('Deploy-',parameters('accessConnectorName')))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions','ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                "principalId": "[reference(concat('Deploy-',parameters('accessConnectorName'))).outputs.principalId.value]"
+            }
+        }
+    ]
+}

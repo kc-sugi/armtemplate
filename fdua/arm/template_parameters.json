@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "value": "ws-fdua-prod-001"
+        },
+        "rgName": {
+            "value": "rg-fdua-prod"
+        },
+        "rgLocation": {
+            "value": "Japan East"
+        },
+        "storagePrefix": {
+            "value": "fduaprod001"
+        },
+        "accessConnectorName": {
+            "value": "ac-fdua-prod-001"
+        }
+    }
+}
