@@ -3,22 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "value": "ws-databricks-temp"
+            "value": "ws-adk-prod-001"
         },
         "rgName": {
-            "value": "rg-databricks-temp"
+            "value": "rg-adk-prod-001"
         },
         "accessConnectorName": {
-            "value": "rg-databricks-temp"
-        },
-        "storageAccountName": {
-            "value": "rg-databricks-temp"
+            "value": "ac-adk-prod-001"
         },
         "rgLocation": {
             "value": "Japan East"
         },
         "storagePrefix": {
-            "value": "value"
+            "value": "adkprod001"
         }
     }
 }
